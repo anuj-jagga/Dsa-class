@@ -1,0 +1,185 @@
+import java.util.*;
+
+class LRUCache {
+
+    class Node {
+        int key, value;
+        Node prev, next;
+
+        Node(int key, int value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
+
+    private int capacity;
+    private HashMap<Integer, Node> map;
+    private Node head, tail;
+
+    public LRUCache(int capacity) {
+        this.capacity = capacity;
+        map = new HashMap<>();
+
+        head = new Node(0, 0);
+        tail = new Node(0, 0);
+
+        head.next = tail;
+        tail.prev = head;
+    }
+
+    private void remove(Node node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+    }
+
+    private void insert(Node node) {
+        node.next = head.next;
+        node.prev = head;
+
+        head.next.prev = node;
+        head.next = node;
+    }
+
+    public int get(int key) {
+        if (!map.containsKey(key))
+            return -1;
+
+        Node node = map.get(key);
+        remove(node);
+        insert(node);
+
+        return node.value;
+    }
+
+    public void put(int key, int value) {
+
+        if (map.containsKey(key)) {
+            remove(map.get(key));
+        }
+
+        Node node = new Node(key, value);
+        insert(node);
+        map.put(key, node);
+
+        if (map.size() > capacity) {
+            Node lru = tail.prev;
+            remove(lru);
+            map.remove(lru.key);
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+2.  class Solution {
+    public ListNode mergeKLists(ListNode[] lists) {
+
+        PriorityQueue<ListNode> pq = new PriorityQueue<>(
+            (a, b) -> a.val - b.val
+        );
+
+        for (ListNode node : lists) {
+            if (node != null)
+                pq.offer(node);
+        }
+
+        ListNode dummy = new ListNode(0);
+        ListNode curr = dummy;
+
+        while (!pq.isEmpty()) {
+
+            ListNode node = pq.poll();
+
+            curr.next = node;
+            curr = curr.next;
+
+            if (node.next != null)
+                pq.offer(node.next);
+        }
+
+        return dummy.next;
+    }
+}
+
+
+3. class Solution {
+
+    int[][] dir = {{1,0},{-1,0},{0,1},{0,-1}};
+
+    public int maxAreaOfIsland(int[][] grid) {
+
+        int ans = 0;
+
+        for(int i=0;i<grid.length;i++){
+            for(int j=0;j<grid[0].length;j++){
+
+                if(grid[i][j]==1){
+                    ans = Math.max(ans, dfs(grid,i,j));
+                }
+
+            }
+        }
+
+        return ans;
+    }
+
+    int dfs(int[][] grid,int i,int j){
+
+        if(i<0 || j<0 || i>=grid.length || j>=grid[0].length || grid[i][j]==0)
+            return 0;
+
+        grid[i][j]=0;
+
+        int area=1;
+
+        for(int[] d:dir){
+            area += dfs(grid,i+d[0],j+d[1]);
+        }
+
+        return area;
+    }
+}
+
+
+
+
+
+
+
+4.class Solution {
+
+    int[][] dir = {{1,0},{-1,0},{0,1},{0,-1}};
+
+    public int[][] floodFill(int[][] image, int sr, int sc, int color) {
+
+        int original = image[sr][sc];
+
+        if(original == color)
+            return image;
+
+        dfs(image,sr,sc,original,color);
+
+        return image;
+    }
+
+    void dfs(int[][] image,int r,int c,int original,int color){
+
+        if(r<0 || c<0 || r>=image.length || c>=image[0].length)
+            return;
+
+        if(image[r][c]!=original)
+            return;
+
+        image[r][c]=color;
+
+        for(int[] d:dir){
+            dfs(image,r+d[0],c+d[1],original,color);
+        }
+    }
+}
