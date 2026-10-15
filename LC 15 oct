@@ -1,0 +1,107 @@
+class Solution {
+    public boolean isSymmetric(TreeNode root) {
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root.left);
+        q.add(root.right);
+
+        while(!q.isEmpty()){
+            TreeNode left = q.poll();
+            TreeNode right = q.poll();
+
+            if(left == null && right == null){
+                continue;
+            }
+
+            if(left == null || right == null){
+                return false;
+            }
+
+            if(left.val != right.val){
+                return false;
+            }
+
+            q.add(left.left);
+            q.add(right.right);
+            q.add(left.right);
+            q.add(right.left);
+        }
+
+        return true;
+    }
+}
+
+
+
+class Solution {
+    public List<List<Integer>> levelOrderBottom(TreeNode root) {
+        List<List<Integer>> result = new ArrayList<>();
+
+        if(root == null){
+            return result;
+        }
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
+
+        while(!q.isEmpty()){
+            int levelSize = q.size();
+            List<Integer> currentLevel = new ArrayList<>();
+            for(int i=0;i<levelSize;i++){
+                TreeNode currentNode = q.poll();
+                currentLevel.add(currentNode.val);
+                if(currentNode.left != null){
+                    q.offer(currentNode.left);
+                }
+                if(currentNode.right != null){
+                    q.offer(currentNode.right);
+                }
+            }
+            result.add(0,currentLevel); // same as leetcode 102,just this line is different
+        }
+        return result;
+    }
+}
+
+
+
+class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root == null) return null;
+
+        if(root == p || root == q){
+            return root;
+        }
+
+        TreeNode left = lowestCommonAncestor(root.left,p,q);
+        TreeNode right = lowestCommonAncestor(root.right,p,q);
+
+        if(left!=null && right!=null){
+            return root;
+        }
+
+        return (left == null)? right: left;
+    }
+}
+
+
+
+class Solution {
+    public int sumOfLeftLeaves(TreeNode root) {
+        if (root == null) return 0;
+        
+        int sum = 0;
+        
+        // Check if the left child is a leaf node
+        if (root.left != null) {
+            if (root.left.left == null && root.left.right == null) {
+                sum += root.left.val; // It's a left leaf! Add its value.
+            } else {
+                sum += sumOfLeftLeaves(root.left); // Continue looking in the left subtree
+            }
+        }
+        
+        // Always check the right subtree for potential left leaves
+        sum += sumOfLeftLeaves(root.right);
+        
+        return sum;
+    }
+}
